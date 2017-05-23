@@ -1,0 +1,1 @@
+java -jar findClass-jar-with-dependencies.jar $@
