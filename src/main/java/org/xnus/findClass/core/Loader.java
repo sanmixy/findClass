@@ -38,7 +38,7 @@ public class Loader {
     }
 
 
-    private List<File> scan() {
+    List<File> scan() {
         File root = new File(this.root);
         checkState(root.isDirectory(), "path " + root.getPath() + " is not a valid directory");
         return include_sub_folder ?
@@ -52,7 +52,6 @@ public class Loader {
 
     public void load() {
         List<File> files = scan();
-        System.out.println(files);
         files.parallelStream().forEach(file -> {
             try {
                 JarFile jarFile = new JarFile(file);
