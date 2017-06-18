@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -50,19 +51,21 @@ public class Loader {
                 .orElse(new File[0]));
     }
 
-    public void load() {
+    public List<JarEntry> load() {
+        List<JarEntry> entries = new ArrayList<>();
         List<File> files = scan();
         files.parallelStream().forEach(file -> {
-            try {
-                JarFile jarFile = new JarFile(file);
+            try (JarFile jarFile = new JarFile(file)) {
                 List<JarEntry> found = jarFile.stream().parallel().filter(entry -> entry.getName().endsWith(CLASS_SUFFIX) && (regex_enabled
                         ? entry.getName().substring(entry.getName().lastIndexOf('/') + 1, entry.getName().length() - 6).matches(class_name)
                         : entry.getName().substring(entry.getName().lastIndexOf('/') + 1, entry.getName().length() - 6).equals(class_name)))
                         .collect(Collectors.toList());
+                entries.addAll(found);
                 found.forEach(entry -> System.out.println("found in " + file.getPath() + " : " + entry.getName()));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
+        return entries;
     }
 }

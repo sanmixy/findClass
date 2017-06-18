@@ -8,6 +8,7 @@ import org.junit.Test;
 import java.io.File;
 import java.net.URLDecoder;
 import java.util.List;
+import java.util.jar.JarEntry;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -42,4 +43,21 @@ public class LoaderTest {
         assertThat(potentials.size(), equalTo(1));
     }
 
+    @Test
+    public void show_not_find_class_when_match_without_regex() throws Exception {
+        loader = new Loader(root, "^\\w+s$", false, true);
+
+        List<JarEntry> load = loader.load();
+
+        assertThat(load.size(), equalTo(0));
+    }
+
+    @Test
+    public void show_find_class_when_match_without_regex() throws Exception {
+        loader = new Loader(root, "^\\w+s$", true, true);
+
+        List<JarEntry> load = loader.load();
+
+        assertThat(load.size(), equalTo(94));
+    }
 }
